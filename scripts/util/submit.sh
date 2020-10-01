@@ -1,7 +1,7 @@
 #PYTHONPATH=${PYTHONPATH}:/afs/inf.ed.ac.uk/group/project/dnn_tts/tools/site-packages/
 
 #PYTHON=~/my_python
-PYTHON=python
+PYTHON=python2
 
 
 ## Generic script for submitting any Theano job to GPU
@@ -13,7 +13,7 @@ THIS_DIR="$( cd "$( dirname "$0" )" && pwd )"
 
 echo $THIS_DIR
 
-gpu_id=$(python $THIS_DIR/gpu_lock.py --id-to-hog)
+gpu_id=$(python2 $THIS_DIR/gpu_lock.py --id-to-hog)
 
 
 if [ $gpu_id -gt -1 ]; then
@@ -24,7 +24,7 @@ if [ $gpu_id -gt -1 ]; then
     
     $PYTHON $@
     
-    python $THIS_DIR/gpu_lock.py --free $gpu_id
+    python2 $THIS_DIR/gpu_lock.py --free $gpu_id
 else
     echo 'Let us wait! No GPU is available!'
 

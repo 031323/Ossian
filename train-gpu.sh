@@ -3,7 +3,7 @@
 LANG=$1
 SPEAKER=$2
 
-python ./scripts/train.py -s $SPEAKER -l $LANG naive_01_nn
+python2 ./scripts/train.py -s $SPEAKER -l $LANG naive_01_nn
 
 
 ./scripts/util/submit.sh ./tools/merlin/src/run_merlin.py ./train/$LANG/speakers/$SPEAKER/naive_01_nn/processors/duration_predictor/config.cfg

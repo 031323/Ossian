@@ -52,7 +52,7 @@ fi
 mv $OUTDIR/data/mlf.mono.NEW $OUTDIR/data/mlf.mono
 
 ## remove names of utts for which no label has been found from training list:
-$UTIL/update_train_list.py -mlf $OUTDIR/data/mlf.mono -trainlist $OUTDIR/data/uttlist.cmp 
+python2 $UTIL/update_train_list.py -mlf $OUTDIR/data/mlf.mono -trainlist $OUTDIR/data/uttlist.cmp 
 
 ## copy models (which weren't updated):
 cp $INDIR/cmp.mmf $OUTDIR/cmp.mmf

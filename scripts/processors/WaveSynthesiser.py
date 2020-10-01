@@ -35,6 +35,8 @@ class WaveSynthesiser(UtteranceProcessor):
                 return
 
         fzero = utt.get_filename("gen_f0")
+	print "FZERO"
+	print fzero
         mcep  = utt.get_filename("gen_mcep")
         bndap = utt.get_filename("gen_bndap")
         

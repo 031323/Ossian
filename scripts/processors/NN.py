@@ -667,7 +667,6 @@ class NNDurationPredictor(SUtteranceProcessor):
 #         if not self.trained:
 #             print 'WARNING: Cannot apply processor %s till model is trained'%(self.processor_name)
 #             return
-        
         label = utt.get_filename(self.input_label_filetype) 
         
         durations = self.model.generate(label)
@@ -676,6 +675,8 @@ class NNDurationPredictor(SUtteranceProcessor):
         nodes = utt.xpath(self.target_nodes)
         assert  m == len(nodes)
         
+        #print "process_utterence !!"
+        #i=0
         start = 0
         for (node, state_durs) in zip(nodes, durations):
             for dur in state_durs:
@@ -684,8 +685,10 @@ class NNDurationPredictor(SUtteranceProcessor):
                 child.set('start', str(start * self.ms_framerate))
                 child.set('end', str(end * self.ms_framerate))
                 node.add_child(child)
-                
+                #print str(start * self.ms_framerate)+' '+str(end * self.ms_framerate)
                 start = end
+                #i=i+1
+        #print 'i '+str(i)
 
 
 
