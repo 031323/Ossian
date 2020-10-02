@@ -48,7 +48,7 @@ STEPNUM=1
 start_time=$(date +"%s")
 
 
-$TOPDIR/steps/set_up_data.py -labdir $LABDIR -cmpdir $CMPDIR -outdir $OUT/${STEPNUM} -bindir $BIN
+python2 $TOPDIR/steps/set_up_data.py -labdir $LABDIR -cmpdir $CMPDIR -outdir $OUT/${STEPNUM} -bindir $BIN
 check_step ; PREVIOUS=$STEPNUM ; STEPNUM=$[$STEPNUM + 1]
                                      
 $STEPS/make_monophone.sh $OUT/$PREVIOUS $OUT/$STEPNUM  $BIN

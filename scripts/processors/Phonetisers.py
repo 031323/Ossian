@@ -110,16 +110,21 @@ class SanskritPhonetiser(SUtteranceProcessor):
             
             if current_class in self.word_classes:
                 word = node.attrib[self.target_attribute]
-                children = self.varnzanirnzayah(word)
+                children,svrah,svrahL,svrahR = self.varnzanirnzayah(word)
             elif current_class in self.probable_pause_classes:
                 children = [c.PROB_PAUSE]
             elif current_class in self.possible_pause_classes:
                 children = [c.POSS_PAUSE]
             else:
                 sys.exit('Class "%s" not in any of word_classes, probable_pause_classes, possible_pause_classes')
-            for chunk in children:
+            for i in range(0,len(children)):
+                chunk=children[i]
                 child = Element(self.child_node_type)
                 child.set(self.output_attribute, chunk)
+                if current_class in self.word_classes:
+                    child.set('svrh',str(svrah[i]))
+                    child.set('svrhL',str(svrahL[i]))
+                    child.set('svrhR',str(svrahR[i]))
                 node.add_child(child)
 
     def varnzanirnzayah(self,word):
@@ -182,7 +187,7 @@ class SanskritPhonetiser(SUtteranceProcessor):
         vrnah=[]
         for i in varnzaah:
             vrnah.append(transliterate[i])
-        return vrnah
+        return vrnah,svrah,svrahL,svrahR
         
     def do_training(self, speech_corpus, text_corpus):
         print "NaivePhonetiser requires no training"    

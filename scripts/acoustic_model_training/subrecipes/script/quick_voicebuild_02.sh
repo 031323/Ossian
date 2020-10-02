@@ -65,7 +65,7 @@ grep $SHORT_QUESTION_PATT $QUESTIONS > $SHORT_QUESTIONS
 STEPNUM=1                 
 
 ## Make small data set for training monophone models:
-$TOPDIR/steps/set_up_data.py -labdir $LABDIR -cmpdir $CMPDIR -outdir $OUT/data_${MONOPHONE_SUBSET} \
+python2 $TOPDIR/steps/set_up_data.py -labdir $LABDIR -cmpdir $CMPDIR -outdir $OUT/data_${MONOPHONE_SUBSET} \
             -bindir $BIN -subset $MONOPHONE_SUBSET
                            
 $STEPS/make_monophone.sh $OUT/data_${MONOPHONE_SUBSET} $OUT/$STEPNUM  $BIN
@@ -76,7 +76,7 @@ FIRST_ITER=1
 for SUBSET in $SUBSETS ; do
 
     ## Move up to more data -- make it in $OUT/$STEPNUM where future models are trained:
-    $TOPDIR/steps/set_up_data.py -labdir $LABDIR -cmpdir $CMPDIR -outdir $OUT/$STEPNUM \
+    python2 $TOPDIR/steps/set_up_data.py -labdir $LABDIR -cmpdir $CMPDIR -outdir $OUT/$STEPNUM \
             -bindir $BIN -subset $SUBSET
     check_step ;
 

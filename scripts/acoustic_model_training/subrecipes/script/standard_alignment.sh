@@ -39,7 +39,7 @@ start_time=$(date +"%s")
 
 ## ------ preparation ------
 
-python $STEPS/set_up_data.py -labdir $LABDIR -cmpdir $CMPDIR -outdir $OUT/${STEPNUM} -bindir $BIN
+python2 $STEPS/set_up_data.py -labdir $LABDIR -cmpdir $CMPDIR -outdir $OUT/${STEPNUM} -bindir $BIN
 check_step ;
 $STEPS/make_alignment_lexicon.sh $OUT/$STEPNUM  $BIN
 check_step ; PREVIOUS=$STEPNUM ; STEPNUM=$[$STEPNUM + 1]
