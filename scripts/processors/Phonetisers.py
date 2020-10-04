@@ -121,10 +121,10 @@ class SanskritPhonetiser(SUtteranceProcessor):
                 chunk=children[i]
                 child = Element(self.child_node_type)
                 child.set(self.output_attribute, chunk)
-                if current_class in self.word_classes:
-                    child.set('svrh',str(svrah[i]))
-                    child.set('svrhL',str(svrahL[i]))
-                    child.set('svrhR',str(svrahR[i]))
+                #if current_class in self.word_classes:
+                #    child.set('svrh',str(svrah[i]))
+                #    child.set('svrhL',str(svrahL[i]))
+                #    child.set('svrhR',str(svrahR[i]))
                 node.add_child(child)
 
     def varnzanirnzayah(self,word):
@@ -185,8 +185,13 @@ class SanskritPhonetiser(SUtteranceProcessor):
             "क":"k", "ख":"kh", "ग":"g", "घ":"gh", "ङ":"N1", "च":"c", "छ":"ch", "ज":"j", "झ":"jh", "ञ":"N2", "ट":"T", "ठ":"Th", "ड":"D", "ढ":"Dh", "ण":"N3", "त":"t", "थ":"th", "द":"d", "ध":"dh", "न":"n", "प":"p", "फ":"ph", "ब":"b", "भ":"bh", "म":"m", "य":"y", "र":"r", "ल":"l", "ळ":"L", "व":"v", "श":"s1", "ष":"s2", "स":"s", "ह":"h", "ं":"M", "ः":"H", "अ":"a", "आ":"A", "इ":"i", "ई":"I", "उ":"u", "ऊ":"U", "ऋ":"R", "ॠ":"RR", "ऌ":"l1", "ॡ":"l2", "ए":"e", "ऐ":"ai", "ओ":"o", "औ":"au", "लँ":"ln"
         }
         vrnah=[]
-        for i in varnzaah:
-            vrnah.append(transliterate[i])
+        for i in range(0,len(varnzaah)):
+            vrnah.append(transliterate[varnzaah[i]])
+            if transliterate[varnzaah[i]][0] in ['k','g','c','j','T','D','t','d','p','b'] and (i+1)<len(varnzaah):
+            	vrnah[-1]=transliterate[varnzaah[i]][0]
+            	if transliterate[varnzaah[i+1]][0]!=transliterate[varnzaah[i]][0]:vrnah.append(transliterate[varnzaah[i]]+'x')
+            if transliterate[varnzaah[i]][0]=='s' and i>0:
+            	if transliterate[varnzaah[i]]=='H':vrnah[-2]=vrnah[-1]
         return vrnah,svrah,svrahL,svrahR
         
     def do_training(self, speech_corpus, text_corpus):
