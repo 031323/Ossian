@@ -198,7 +198,7 @@ class FeatureDumper(SUtteranceProcessor):
         Additionally, write question file including continuous questions (CQS) for 
         DNN training
         """
-
+        print raw_questions
         unique_questions = {}
         for (number, name, value) in raw_questions:
             if (number, name) not in unique_questions:
@@ -297,7 +297,44 @@ class FeatureDumper(SUtteranceProcessor):
         values_file = outfile + ".values"
         writelist(values_list, values_file, uni=True)    
         
+        if self.processor_name != 'labelmaker':return
         
+        transliterate={
+            "क":"k", "ख":"kh", "ग":"g", "घ":"gh", "ङ":"N1", "च":"c", "छ":"ch", "ज":"j", "झ":"jh", "ञ":"N2", "ट":"T", "ठ":"Th", "ड":"D", "ढ":"Dh", "ण":"N3", "त":"t", "थ":"th", "द":"d", "ध":"dh", "न":"n", "प":"p", "फ":"ph", "ब":"b", "भ":"bh", "म":"m", "य":"y", "र":"r", "ल":"l", "ळ":"L", "व":"v", "श":"s1", "ष":"s2", "स":"s", "ह":"h", "ं":"M", "ः":"H", "अ":"a", "आ":"A", "इ":"i", "ई":"I", "उ":"u", "ऊ":"U", "ऋ":"R", "ॠ":"RR", "ऌ":"l1", "ॡ":"l2", "ए":"e", "ऐ":"ai", "ओ":"o", "औ":"au", "लँ":"ln"
+        }
+        l=[]
+        l.append([transliterate[i] for i in 'अ इ उ ऋ ऌ'.split(' ')])
+        l.append([transliterate[i] for i in 'आ ई ऊ ॠ ॡ ए ओ'.split(' ')])
+        l.append([transliterate[i] for i in 'क ख ग घ ङ च छ ज झ ञ ट ठ ड ढ ण त थ द ध न प फ ब भ म य र ल ळ व श ष स ह'.split(' ')])
+        l.append([transliterate[i] for i in 'क ख ग घ च छ ज झ ट ठ ड ढ त थ द ध प फ ब भ'.split(' ')])
+        #l.append([transliterate[i]+'x' for i in 'क ख ग घ च छ ज झ ट ठ ड ढ त थ द ध प फ ब भ'.split(' ')])
+        l+=[['k','g'],['kh','gh'],['k','kh'],['g','gh']]
+        l+=[['c','j'],['ch','jh'],['c','ch'],['j','jh']]
+        l+=[['T','D'],['Th','Dh'],['T','Th'],['D','Dh']]
+        l+=[['t','d'],['th','dh'],['t','th'],['d','dh']]
+        l+=[['p','b'],['ph','bh'],['p','ph'],['b','bh']]
+        l+=[['N1','N2','N3','n','m']]
+        l+=[['h','H']]
+        l+=[['a','A']]
+        l+=[['i','I','y']]
+        l+=[['u','U','v']]
+        l+=[['R','RR','r']]
+        l+=[['l1','l2','l']]
+        i=0
+        s='\n'
+        for p in range(0,5):
+        	for j in l:
+        		s+='QS q'+str(i)+' {'
+        		for k in range(0,len(j)):
+        			if k!=0:s+=','
+        			s+='*/'+str(p)+':'+j[k]+'/*'
+        		s+='}\n'
+        		i+=1
+        
+        print s
+        f=open(outfile,'a')
+        f.write(s)
+        f.close()
 #     def parse_context_list(self):
 #         """
 #         Use string-list (not section) in config to preserve order if input as dictionary.
@@ -401,7 +438,7 @@ class FeatureDumper(SUtteranceProcessor):
               
             ##corpus_questions.update(utt_questions)
        
-        corpus_questions = self.filter_questions(corpus_questions)
+        #corpus_questions = self.filter_questions(corpus_questions)
             
         
            
@@ -476,6 +513,7 @@ class FeatureDumperWithSubstates(FeatureDumper):
                 ## these returned values will be ignored. But these can be used to
                 ## acccumulate questions and features over the whole corpus for  
                 ## training (see train() method).    
+
 
 
 

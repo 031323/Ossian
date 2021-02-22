@@ -323,9 +323,10 @@ class AcousticModelWorld(AcousticModel):
         
         # generate parameters with hts_engine, one stream at the time
         feats = str.split(self.stream_definitions["STREAM_NAMES"])
-        
+        os.system('mkdir -p ./tmp')
         #self.vuv = 0.4
         for f in feats:
+        #for f in ['mgc']:
         
             comm = self.hts_dir + '/hts_engine '
             comm += "  -td %s/tree-duration.inf "%(self.model_dir)
@@ -337,9 +338,9 @@ class AcousticModelWorld(AcousticModel):
             comm += "  -tm %s/tree-%s.inf "%(self.model_dir, f)
             comm += "  -mm %s/%s.pdf "%(self.model_dir,f)
 
-            comm += "  -ow /tmp/tmp.wav"        
-            comm += "  -om /tmp/tmp.%s"%(f)    
-            comm += "  -of /tmp/tmp.lf0"    
+            comm += "  -ow ./tmp/tmp.wav"        
+            comm += "  -om ./tmp/tmp.%s"%(f)    
+            comm += "  -of ./tmp/tmp.lf0"    
             
             ## windows:
             for stream in ['f', 'm']:
@@ -347,24 +348,33 @@ class AcousticModelWorld(AcousticModel):
                     comm += "  -d%s %s "%(stream, winfile)
             comm += " -b %s "%(self.postfilter_coeff) ## for postfiltering 
             comm += " -r %s "%(self.speech_rate) 
+            #comm += "-r 0.75 "
+            #comm += "-p 240 "
+            #comm += "-s 48000 "
             comm += "  -u %s "%(self.vuv)
+            #comm += "  -u 0.95 "
             #comm += "  -ow %s "%(owave)
             comm += " -ot %s.log "%(label)
+            comm += " -od ./tmp/tmp.dur "
             comm += "    %s  "%(label)
         
             print comm
             
             os.system(comm)
+            if f=='mgc':
+                os.system('cp ./tmp/tmp.wav '+'./tmp/hts.wav')
 
-
+        #return
+        
+        
         ### hack -- tile silences with pure silence:
         sils = silence_frames_from_trace(label+ '.log')
         
         fftl, ap_dim = get_world_fft_and_apdim(self.sample_rate)
 
-        fz= get_speech('/tmp/tmp.lf0',1)
-        mgc= get_speech('/tmp/tmp.mgc',self.speech_coding_config['order']+1) # 40)
-        ap= get_speech('/tmp/tmp.bap',ap_dim)
+        fz= get_speech('./tmp/tmp.lf0',1)
+        mgc= get_speech('./tmp/tmp.mgc',self.speech_coding_config['order']+1) # 40)
+        ap= get_speech('./tmp/tmp.bap',ap_dim)
 
         for (i,val) in enumerate(sils):
             if val == 1:
@@ -382,9 +392,9 @@ class AcousticModelWorld(AcousticModel):
 
 
         ap =np.zeros(np.shape(ap))
-        put_speech(fz, '/tmp/tmp.lf0')
-        put_speech(mgc, '/tmp/tmp.mgc')
-        put_speech(ap, '/tmp/tmp.bap') 
+        put_speech(fz, './tmp/tmp.lf0')
+        put_speech(mgc, './tmp/tmp.mgc')
+        put_speech(ap, './tmp/tmp.bap') 
 
         # process parameters -- OSW todo wavesynth processor sharing config with extraction
             
@@ -392,17 +402,17 @@ class AcousticModelWorld(AcousticModel):
         for f in reversed(feats):
         
             if f == "lf0":
-                os.system(bin_dir+"/x2x +fa /tmp/tmp."+f+" >/tmp/tmp_a."+f)
+                os.system(bin_dir+"/x2x +fa ./tmp/tmp."+f+" >./tmp/tmp_a."+f)
                 
-                f0 = loadtxt('/tmp/tmp_a.lf0')
+                f0 = loadtxt('./tmp/tmp_a.lf0')
                 f0[f0>0]=exp(f0[f0>0])
                 f0[f0<=0] = 0
-                savetxt("/tmp/tmp_a.f0", f0.astype('float'), fmt = '%.8f')        
+                savetxt("./tmp/tmp_a.f0", f0.astype('float'), fmt = '%.8f')        
         
-                os.system(bin_dir+"/x2x +ad /tmp/tmp_a.f0 > /tmp/tmp_a.f0.d")
+                os.system(bin_dir+"/x2x +ad ./tmp/tmp_a.f0 > ./tmp/tmp_a.f0.d")
         
             else:
-                os.system(bin_dir+"/x2x +fd /tmp/tmp."+f+" >/tmp/tmp_d."+f)
+                os.system(bin_dir+"/x2x +fd ./tmp/tmp."+f+" >./tmp/tmp_d."+f)
             
         
 
@@ -424,9 +434,9 @@ class AcousticModelWorld(AcousticModel):
         '''
 
         
-        #print 'h1'
-        comm = "%s/mgc2sp -a %s -g 0 -m %s -l %s -o 2 /tmp/tmp.mgc | %s/sopr -d 32768.0 -P | %s/x2x +fd -o > /tmp/tmp.spec"%(bin, alpha, order, fftl, bin, bin)
-        #comm = "%s/mgc2sp -a %s -g 0 -m %s -l %s -o 2 /tmp/tmp.mgc | %s/sopr -d 32768.0 -P > /tmp/tmp.spec"%(bin, alpha, order, fftl, bin, bin)
+        print 'h1'
+        comm = "%s/mgc2sp -a %s -g 0 -m %s -l %s -o 2 ./tmp/tmp.mgc | %s/sopr -d 32768.0 -P | %s/x2x +fd -o > ./tmp/tmp.spec"%(bin, alpha, order, fftl, bin, bin)
+        #comm = "%s/mgc2sp -a %s -g 0 -m %s -l %s -o 2 ./tmp/tmp.mgc | %s/sopr -d 32768.0 -P > ./tmp/tmp.spec"%(bin, alpha, order, fftl, bin, bin)
         os.system(comm)
     
         '''Avoid:   x2x : error: input data is over the range of type 'double'!
@@ -438,10 +448,10 @@ class AcousticModelWorld(AcousticModel):
     
 
 
-        comm = "%s/synth %s %s /tmp/tmp_a.f0.d /tmp/tmp.spec /tmp/tmp_d.bap /tmp/tmp.resyn.wav"%(bin, fftl, sr)
+        comm = "%s/synth %s %s ./tmp/tmp_a.f0.d ./tmp/tmp.spec ./tmp/tmp_d.bap ./tmp/tmp.resyn.wav"%(bin, fftl, sr)
         print comm
         os.system(comm)
-        os.system("mv /tmp/tmp.resyn.wav "+owave)
+        os.system("mv ./tmp/tmp.resyn.wav "+owave)
     
     
  

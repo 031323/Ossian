@@ -182,16 +182,23 @@ class SanskritPhonetiser(SUtteranceProcessor):
             if svrh==2:svrahR+=[2]
             else:svrahR+=[0]
         transliterate={
-            "क":"k", "ख":"kh", "ग":"g", "घ":"gh", "ङ":"N1", "च":"c", "छ":"ch", "ज":"j", "झ":"jh", "ञ":"N2", "ट":"T", "ठ":"Th", "ड":"D", "ढ":"Dh", "ण":"N3", "त":"t", "थ":"th", "द":"d", "ध":"dh", "न":"n", "प":"p", "फ":"ph", "ब":"b", "भ":"bh", "म":"m", "य":"y", "र":"r", "ल":"l", "ळ":"L", "व":"v", "श":"s1", "ष":"s2", "स":"s", "ह":"h", "ं":"M", "ः":"H", "अ":"a", "आ":"A", "इ":"i", "ई":"I", "उ":"u", "ऊ":"U", "ऋ":"R", "ॠ":"RR", "ऌ":"l1", "ॡ":"l2", "ए":"e", "ऐ":"ai", "ओ":"o", "औ":"au", "लँ":"ln"
+            "क":"k", "ख":"kh", "ग":"g", "घ":"gh", "ङ":"N1", "च":"c", "छ":"ch", "ज":"j", "झ":"jh", "ञ":"N2", "ट":"T", "ठ":"Th", "ड":"D", "ढ":"Dh", "ण":"N3", "त":"t", "थ":"th", "द":"d", "ध":"dh", "न":"n", "प":"p", "फ":"ph", "ब":"b", "भ":"bh", "म":"m", "य":"y", "र":"r", "ल":"l", "ळ":"L", "व":"v", "श":"s1", "ष":"s2", "स":"s", "ह":"h", "ं":"M", "ः":"H", "अ":"a", "आ":"A", "इ":"i", "ई":"I", "उ":"u", "ऊ":"U", "ऋ":"R", "ॠ":"R", "ऌ":"l1", "ॡ":"l2", "ए":"e", "ऐ":"ai", "ओ":"o", "औ":"au", "लँ":"ln"
         }
         vrnah=[]
         for i in range(0,len(varnzaah)):
+            #if varnzaah[i]=="ऐ":vrnah+=['a','i']
+            #elif varnzaah[i]=="औ":vrnah+=['a','u']
+            #else:
             vrnah.append(transliterate[varnzaah[i]])
-            if transliterate[varnzaah[i]][0] in ['k','g','c','j','T','D','t','d','p','b'] and (i+1)<len(varnzaah):
-            	vrnah[-1]=transliterate[varnzaah[i]][0]
-            	if transliterate[varnzaah[i+1]][0]!=transliterate[varnzaah[i]][0]:vrnah.append(transliterate[varnzaah[i]]+'x')
-            if transliterate[varnzaah[i]][0]=='s' and i>0:
-            	if transliterate[varnzaah[i]]=='H':vrnah[-2]=vrnah[-1]
+            if varnzaah[i]=='ॠ':vrnah.append('R')
+            #if varnzaah[i] in 'आ इ ई उ ऊ ऋ ॠ ऌ ॡ ए ऐ ओ औ'.split(' ') and i+1<len(varnzaah):
+            #	if varnzaah[i+1] in 'आ इ ई उ ऊ ऋ ॠ ऌ ॡ ए ऐ ओ औ'.split(' '):vrnah.append('X')
+            #if transliterate[varnzaah[i]][0] in ['k','g','c','j','T','D','t','d','p','b'] and (i+1)<len(varnzaah):
+            #	vrnah[-1]=transliterate[varnzaah[i]][0]
+            #	if transliterate[varnzaah[i+1]][0]!=transliterate[varnzaah[i]][0]:vrnah.append(transliterate[varnzaah[i]]+'x')
+            if transliterate[varnzaah[i]]=='H' and (i+1)<len(varnzaah):
+            	if transliterate[varnzaah[i+1]][0]=='s':vrnah[-1]=transliterate[varnzaah[i+1]]
+            	if transliterate[varnzaah[i+1]][0]=='p':vrnah[-1]='f'
         return vrnah,svrah,svrahL,svrahR
         
     def do_training(self, speech_corpus, text_corpus):
